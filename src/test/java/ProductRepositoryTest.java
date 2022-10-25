@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.netology.NotFoundException;
 import ru.netology.domane.Product;
 import ru.netology.domane.Smartphone;
 import ru.netology.domane.Book;
@@ -14,6 +15,30 @@ public class ProductRepositoryTest {
     Smartphone smartphone3 = new Smartphone(14,"CX3", 10000, "Хайоми");
 
     ProductRepository repo = new ProductRepository();
+
+    @Test
+    public void deletingAnExistingElementByID() {
+
+        repo.save(book1);
+        repo.save(book2);
+        repo.save(book3);
+        repo.removeById(book2.getId());
+
+        Product[] expected = {book1, book3};
+        Product[] actual = repo.getProducts();
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void attemptToRemoveNonExistentElement() {
+        repo.save(smartphone1);
+        repo.save(smartphone2);
+        repo.save(book1);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            repo.removeById(105);
+        });
+    }
 
     @Test
     public void saveProduct() {
