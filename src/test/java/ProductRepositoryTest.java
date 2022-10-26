@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.netology.AlreadyExistsException;
 import ru.netology.NotFoundException;
 import ru.netology.domane.Product;
 import ru.netology.domane.Smartphone;
@@ -40,6 +41,20 @@ public class ProductRepositoryTest {
         });
     }
 
+    @Test
+    public void generationAlreadyExistsExceptionWhenAddedWithRepeatingId() {
+        repo.add(book1);
+        Assertions.assertThrows(AlreadyExistsException.class, () -> {
+            repo.add(book1);
+        });
+    }
+    @Test
+    public void  addProduct() {
+        repo.add(book1);
+        Product[] expected = {book1,book2};
+        repo.add(book2);
+        Assertions.assertArrayEquals(expected, repo.getProducts());
+    }
     @Test
     public void saveProduct() {
         repo.save(book1);
