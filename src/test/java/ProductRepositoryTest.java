@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.netology.AlreadyExistsException;
+import ru.netology.NotFoundException;
 import ru.netology.domane.Product;
 import ru.netology.domane.Smartphone;
 import ru.netology.domane.Book;
@@ -15,6 +17,44 @@ public class ProductRepositoryTest {
 
     ProductRepository repo = new ProductRepository();
 
+    @Test
+    public void deletingAnExistingElementByID() {
+
+        repo.save(book1);
+        repo.save(book2);
+        repo.save(book3);
+        repo.removeById(book2.getId());
+
+        Product[] expected = {book1, book3};
+        Product[] actual = repo.getProducts();
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void attemptToRemoveNonExistentElement() {
+        repo.save(smartphone1);
+        repo.save(smartphone2);
+        repo.save(book1);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            repo.removeById(105);
+        });
+    }
+
+    @Test
+    public void generationAlreadyExistsExceptionWhenAddedWithRepeatingId() {
+        repo.add(book1);
+        Assertions.assertThrows(AlreadyExistsException.class, () -> {
+            repo.add(book1);
+        });
+    }
+    @Test
+    public void  addProduct() {
+        repo.add(book1);
+        Product[] expected = {book1,book2};
+        repo.add(book2);
+        Assertions.assertArrayEquals(expected, repo.getProducts());
+    }
     @Test
     public void saveProduct() {
         repo.save(book1);
